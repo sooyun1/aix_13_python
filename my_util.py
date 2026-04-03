@@ -35,20 +35,24 @@ def get_dust(city="서울"):
     target = request.urlopen(url) #접속 정보 등록
     soup = BeautifulSoup(target, "html.parser") #구조 분해 분석
 
-    tag = "div.detail_info.lv3 > dl" #먼지 오전
+    tag = "div.detail_info.lv2 > dl > dd.lvl" #먼지 오전
     dust = soup.select_one(tag).get_text() #포함된 모든 글자 추출
     dust = ' '.join(dust.split())
-    dust = dust.split() #공백 제거
-    result = {dust[0] : dust[1]} #{오전:나쁨}만 추출
+    print('오전 미세먼지는', dust)
+
+    # dust = dust.split() #공백 제거
+    # result = {dust[0] : dust[1]} #{오전:나쁨}만 추출
     # print('result am:', result)
 
-    tag = "div.detail_info.lv2 > dl" #먼지 오후
+    tag = "div.detail_info.lv2 > dl > dd.lvl" #먼지 오후
     dust = soup.select_one(tag).get_text() #포함된 모든 글자 추출
     dust = ' '.join(dust.split())
-    dust = dust.split() #공백 제거
-    result[dust[0]] = dust[1] #{오후:보통}만 추출, []-> 기존에서 추가
+    print('오후 미세먼지는', dust)
+
+    # dust = dust.split() #공백 제거
+    # result[dust[0]] = dust[1] #{오후:보통}만 추출, []-> 기존에서 추가
     # print('result:', result)
-    return result
+    # return result
 
 def get_stock():
     url = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90+%EC%A3%BC%EA%B0%80&ackey=azn6ffdn"
@@ -67,13 +71,26 @@ def get_stock():
 # get_stock()
 
 
+def get_currency():
+    url = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=%ED%99%98%EC%9C%A8&ackey=0snak8xs"
+    target = request.urlopen(url) #접속 정보 등록
+    soup = BeautifulSoup(target, "html.parser") #구조 분해 분석
+
+    tag = "span.spt_con.dw > strong" #달러
+    money = soup.select_one(tag).get_text() #포함된 모든 글자 추출
+
+    return money
+
+
+
 if __name__ == "__main__":
     city = '서울'
     ans = get_weather(city)
     print(f'{city} 습도는 {ans['hum']}')
     ans = get_dust(city)
-    print(f'{city} 오전 미세먼지는 {ans['오전']}')
+    # print(f'{city} 오전 미세먼지는 {ans}')
     ans = get_stock()
-    print(f'삼성전자 주가는{ans}')
+    print(f'삼성전자 주가는 {list(ans)[0]}')
+    print(f'달러 환율은{list(ans)[0]}원')
 # print('__name__', __name__)
 
